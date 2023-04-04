@@ -53,4 +53,4 @@ if __name__ == '__main__':
     porta = 5555
     connection_thread = threading.Thread(target=check_connection)
     connection_thread.start()
-    app.run(host='192.168.0.171', port=porta)
+    app.run(host='0.0.0.0', port=porta)
