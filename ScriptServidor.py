@@ -1,24 +1,20 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from gpiozero import LED, Button
 import threading
+import requests
 import tkinter as tk
 import time
 
-# Initialize Flask app
 app = Flask(__name__)
 
-# Initialize variable to store number
-global number
-
-# Define pin numbers
-pin_leds = [4, 17, 27, 22, 5, 6, 13, 19, 26, 21]
-pin_button = 2
-pin_buzzer = 18
-
 # Initialize LEDs and buzzer
+pin_leds = [4, 17, 27, 22, 5, 6, 13, 19, 26, 21]
 leds = [LED(pin) for pin in pin_leds]
-button = Button(pin_button)
-buzzer = LED(pin_buzzer)
+button = Button(2)
+buzzer = LED(18)
+buzzer.on()
+time.sleep(0.1)
+buzzer.off()
 
 # Define GUI
 def create_gui():
@@ -36,10 +32,11 @@ def update_gui(number):
         label.config(text="Objeto Lido! Número do Objeto: {}".format(number))
     else:
         label.config(text="Pronto para ler!")
+
 def reset_gui():
     global label
     label.config(text="Pronto para ler!")
-    
+
 # Define function to turn off the LED after 10 seconds
 def turn_off_led(led):
     time.sleep(10)
@@ -51,6 +48,10 @@ gui_thread = threading.Thread(target=create_gui)
 gui_thread.start()
 
 # Flask routes
+@app.route('/api/check_connection', methods=['GET'])
+def check_connection():
+    return "", 200
+
 @app.route('/api/<int:number>', methods=['POST'])
 def receive_number(number):
     global leds
@@ -74,10 +75,11 @@ def receive_number(number):
         led = leds[number-1]
         led.on()
         buzzer.on()
+        time.sleep(0.1)
         buzzer.off()
         current_led = led
         # Start a timer to turn off the LED after 10 seconds
-        led_timer = threading.Timer(10, turn_off_led, args=[led])
+        led_timer = threading.Timer(0, turn_off_led, args=[led])
         led_timer.start()
     else:
         print("Wrong Number Received")
@@ -90,4 +92,4 @@ if __name__ == '__main__':
     porta=5555
     current_led = None
     led_timer = None
-    app.run(host='192.168.0.150', port=porta)
+    app.run(host='0.0.0.0', port=porta)
