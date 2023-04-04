@@ -1,21 +1,27 @@
 import cv2
+import numpy as np
 import requests
 import time
-import numpy as np
+import subprocess
+
+# Get screen dimensions
+screen_width, screen_height = 640, 480  # Change these values to match your screen size
+
+# Create black image to display text
+text_image = np.zeros((screen_height, screen_width, 3), dtype=np.uint8)
 
 input_buffer = ''
+readCode = ''
 input_timestamp = 0
 
-# Create a window to display the keyboard input
-cv2.namedWindow('Keyboard Input', cv2.WINDOW_NORMAL)
+script_path = "C:\Scripts\ScriptEmuMTS.py"
+subprocess.Popen(["python", script_path])
 
 while True:
-    # Convert the input buffer to a NumPy array for display
-    img = np.zeros((100, 400, 3), dtype=np.uint8)
-    cv2.putText(img, input_buffer, (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 2, (255, 255, 255), 2, cv2.LINE_AA)
-
-    # Show the current input buffer in the GUI window
-    cv2.imshow('Keyboard Input', img)
+    # Display text on image
+    cv2.putText(text_image, readCode, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+    # Show image
+    cv2.imshow('Keyboard Input', text_image)
 
     # Wait for key press
     key = cv2.waitKey(1)
@@ -31,6 +37,7 @@ while True:
             if input_buffer:  # Check if the input buffer is not empty
                 try:
                     number = input_buffer
+                    readCode = input_buffer
                     print(f"Keyboard input: {number}")
                     # Send data to server
                     url = 'http://192.168.0.171:5555/api/' + str(number)
@@ -47,6 +54,7 @@ while True:
     if input_buffer and time.time() - input_timestamp > 0.1:
         try:
             number = input_buffer
+            readCode = input_buffer
             print(f"Keyboard input: {number}")
             # Send data to server
             url = 'http://192.168.0.171:5555/api/' + str(number)
@@ -57,5 +65,9 @@ while True:
         input_buffer = ''  # Clear the input buffer
         input_timestamp = 0  # Reset the input timestamp
 
-# Destroy the window before exiting the program
+    # Clear text from image if input buffer is empty
+    if not input_buffer:
+        text_image = np.zeros((screen_height, screen_width, 3), dtype=np.uint8)
+
+# Release resources
 cv2.destroyAllWindows()
