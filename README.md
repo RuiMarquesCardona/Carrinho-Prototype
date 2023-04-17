@@ -18,6 +18,6 @@ ScriptServer: Serves as a script that runs on a raspberry, receives data coming 
 
 ScriptClient: Reads a barcode, input coming from a barcode scanner, and sends that code to a script running on the same machine.
 
-ScriptEmuMTS: Simulates MTS7 database with a dictionary, it receives the barcode read and sends to the raspberry the LED code to be connected.
+ScriptEmuMTS: Simulates MTS7 database with a dictionary, it receives the barcode read and sends to the raspberry the LED code to be turned on.
 
 Communication between ScriptServer and ScriptEmuMTS is done through HTTP POST
