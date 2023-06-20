@@ -6,20 +6,22 @@ import threading
 app = Flask(__name__)
 
 CODE_MAP = {
-    'CODE1': 1,
-    'CODE2': 2,
-    'CODE3': 3,
-    'CODE4': 4,
-    'CODE5': 5,
-    'CODE6': 6,
-    'CODE7': 7,
-    'CODE8': 8,
-    'CODE9': 9,
-    'CODE10': 10
+    '1001': 1,
+    '1002': 2,
+    '1003': 3,
+    '1004': 4,
+    '1005': 5,
+    '1006': 6,
+    '1007': 7,
+    '1008': 8,
+    '1009': 9,
+    '1010': 10,
+    '1011': 11,
+    '1012': 12
 }
 
 def check_connection():
-    url = 'http://192.168.0.150:5555/api/check_connection'
+    url = 'http://192.168.0.171:5600/api/check_connection'
     while True:
         try:
             response = requests.get(url)
@@ -29,12 +31,12 @@ def check_connection():
                 print(f'Failed to establish connection. Status code: {response.status_code}')
         except requests.exceptions.RequestException as e:
             print(f'Error connecting to {url}: {e}')
-        time.sleep(5)
+        time.sleep(10)
 
 def send_number(number):
     # do something to calculate the number
     # send the number to another server via HTTP POST
-    url = 'http://192.168.0.150:5555/api/' + str(number)
+    url = 'http://192.168.0.171:5600/api/' + str(number)
     response = requests.post(url)
     if response.status_code == 200:
         print('Number sent successfully')
@@ -50,7 +52,7 @@ def receive_code(code):
     return 'Code received and number sent'
 
 if __name__ == '__main__':
-    porta = 5555
+    porta = 5500
     connection_thread = threading.Thread(target=check_connection)
     connection_thread.start()
     app.run(host='0.0.0.0', port=porta)
