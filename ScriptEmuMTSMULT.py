@@ -176,7 +176,7 @@ def check_duplicates():
 
 @app.route('/api/clear_positions', methods=['POST'])
 def clear_positions():
-    # Clear the positions dictionary
+    # Clear the positions dictionar
     for key in positions.keys():
         positions[key] = []
 
