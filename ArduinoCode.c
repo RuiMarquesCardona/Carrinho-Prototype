@@ -1,12 +1,14 @@
 #include <Adafruit_NeoPixel.h>
+#include <SoftwareSerial.h>
 
 #define LED_COUNT 60
 #define LED_PIN 6
 
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+bool bluetoothConnected = false;
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(9600);  // Serial monitor for debugging
   strip.begin();
   strip.show();
 }
@@ -14,16 +16,23 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     String data = Serial.readStringUntil('\n');
-    if (data == "0") {
-      strip.clear();
-      strip.show();
-      Serial.println("All LEDs turned off");
+    if (!bluetoothConnected) {
+      if (data == "hello") {
+        bluetoothConnected = true;
+        Serial.println("connected");
+      }
     } else {
-      int led_num_end = data.indexOf('-');
-      int color_start_index = led_num_end + 1;
-      String led_nums_str = data.substring(0, led_num_end);
-      char color = data[color_start_index];
-      turn_on_leds(led_nums_str, color);
+      if (data == "0") {
+        strip.clear();
+        strip.show();
+        Serial.println("All LEDs turned off");
+      } else {
+        int led_num_end = data.indexOf('-');
+        int color_start_index = led_num_end + 1;
+        String led_nums_str = data.substring(0, led_num_end);
+        char color = data[color_start_index];
+        turn_on_leds(led_nums_str, color);
+      }
     }
   }
 }
@@ -57,7 +66,7 @@ void turn_on_led(int led_num, char color) {
   strip.setPixelColor(led_num, led_color);
   strip.show();
 
-  // Send information back to Python
+  // Send information back to Python over Bluetooth
   String message = "Turned on LED " + String(led_num + 1) + " with color " + color;
-  Serial.println(message);
+  Serial.println(message);  
 }
