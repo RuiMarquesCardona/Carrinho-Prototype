@@ -8,7 +8,7 @@ import os
 import sys
 import json
 
-# Get screen dimensions
+# Get screen dimension
 screen_width, screen_height = 1920, 1080  # Change these values to match your screen size
 
 # Create black image to display text
